@@ -18,7 +18,7 @@ function SubmitButton() {
   );
 }
 
-export default function LoginForm() {
+export default function LoginForm({ notice }: { notice?: string }) {
   const [state, formAction] = useActionState<SignInState, FormData>(signIn, {});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,6 +28,12 @@ export default function LoginForm() {
       <p className="mt-1 text-sm text-gray-500">
         Sign in to continue to your account
       </p>
+
+      {notice ? (
+        <p className="mt-4 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
+          {notice}
+        </p>
+      ) : null}
 
       <h2 className="mt-6 text-base font-semibold text-gray-900">Sign In</h2>
 

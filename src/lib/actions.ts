@@ -38,3 +38,39 @@ export async function signOut(): Promise<void> {
   await deleteSession();
   redirect("/login");
 }
+
+export type RegisterState = {
+  error?: string;
+};
+
+/**
+ * Registration Server Action shared by both the Individual and Entity forms.
+ *
+ * Validates the fields common to every entity type, then hands off to the
+ * WDRA backend. Replace the TODO with the real onboarding request.
+ */
+export async function register(
+  _prevState: RegisterState,
+  formData: FormData,
+): Promise<RegisterState> {
+  const entityType = String(formData.get("entityType") ?? "");
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  if (!entityType) {
+    return { error: "Please select your entity type." };
+  }
+  if (!email) {
+    return { error: "Communication email is required." };
+  }
+  if (password.length < 4) {
+    return { error: "Password must be at least 4 characters." };
+  }
+  if (password !== confirmPassword) {
+    return { error: "Passwords do not match." };
+  }
+
+  // TODO: submit the application to the WDRA onboarding backend.
+  redirect("/login?registered=1");
+}

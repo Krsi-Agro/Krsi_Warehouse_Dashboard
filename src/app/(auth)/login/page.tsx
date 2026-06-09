@@ -7,10 +7,19 @@ export const metadata: Metadata = {
   title: "Sign In | WDRA Portal",
 };
 
-export default async function LoginPage() {
+export default async function LoginPage(props: PageProps<"/login">) {
   const session = await getSession();
   if (session) {
     redirect("/dashboard");
   }
-  return <LoginForm />;
+  const { registered } = await props.searchParams;
+  return (
+    <LoginForm
+      notice={
+        registered
+          ? "Your registration was submitted. You can sign in once your account is approved."
+          : undefined
+      }
+    />
+  );
 }
