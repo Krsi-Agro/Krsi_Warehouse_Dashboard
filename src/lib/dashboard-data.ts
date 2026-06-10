@@ -111,13 +111,24 @@ export const shortcuts = [
   { label: "Loan Requests", icon: "banknote" },
 ] as const;
 
-export const sidebarNav: {
+export type NavItem = {
   label: string;
   icon: string;
-  active?: boolean;
-}[] = [
-  { label: "Dashboard", icon: "home", active: true },
-  { label: "Inward / Intake", icon: "arrow-down-to-line" },
+  href?: string;
+  children?: { label: string; href: string }[];
+};
+
+export const sidebarNav: NavItem[] = [
+  { label: "Dashboard", icon: "home", href: "/dashboard" },
+  {
+    label: "Inward / Intake",
+    icon: "arrow-down-to-line",
+    children: [
+      { label: "Booking", href: "/dashboard/inward/booking" },
+      { label: "New Intake", href: "/dashboard/inward/new-intake" },
+      { label: "Intake List", href: "/dashboard/inward/intake-list" },
+    ],
+  },
   { label: "Quality Inspection", icon: "clipboard-check" },
   { label: "eNWRs / Receipts", icon: "receipt" },
   { label: "Inventory", icon: "boxes" },
@@ -131,4 +142,39 @@ export const sidebarNav: {
   { label: "Audit & Compliance", icon: "clipboard-list" },
   { label: "Master Data", icon: "database" },
   { label: "Settings", icon: "settings" },
+];
+
+export type IntakeRecord = {
+  commodity: string;
+  party: string;
+  quantity: string;
+  requestedOn: string;
+  thumb: "coffee" | "wheat";
+};
+
+export const bookingRequests: IntakeRecord[] = [
+  {
+    commodity: "Coffee (Robusta)",
+    party: "Farmer : Sachin Rana",
+    quantity: "150 MT",
+    requestedOn: "23/08/2026",
+    thumb: "coffee",
+  },
+  {
+    commodity: "Wheat (Hybrid)",
+    party: "Trader : Adarsh Kumar",
+    quantity: "150 MT",
+    requestedOn: "23/08/2026",
+    thumb: "wheat",
+  },
+];
+
+export const newIntakeItems: IntakeRecord[] = [
+  {
+    commodity: "Coffee (Robusta)",
+    party: "Farmer : Sachin Rana",
+    quantity: "150 MT",
+    requestedOn: "23/08/2026",
+    thumb: "coffee",
+  },
 ];
