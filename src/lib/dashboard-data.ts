@@ -147,24 +147,34 @@ export const sidebarNav: NavItem[] = [
 export type IntakeRecord = {
   commodity: string;
   party: string;
+  village: string;
+  mobile: string;
   quantity: string;
-  requestedOn: string;
+  expectedDate: string;
+  requestDay: string;
   thumb: "coffee" | "wheat";
+  action?: "approve" | "invoice";
 };
 
 export const bookingRequests: IntakeRecord[] = [
   {
     commodity: "Coffee (Robusta)",
     party: "Farmer : Sachin Rana",
-    quantity: "150 MT",
-    requestedOn: "23/08/2026",
+    village: "Chikmagalur, KA",
+    mobile: "9818012210",
+    quantity: "50 MT",
+    expectedDate: "90 Days",
+    requestDay: "23/08/2025",
     thumb: "coffee",
   },
   {
     commodity: "Wheat (Hybrid)",
-    party: "Trader : Adarsh Kumar",
-    quantity: "150 MT",
-    requestedOn: "23/08/2026",
+    party: "Farmer : Sachin Rana",
+    village: "Chikmagalur, KA",
+    mobile: "9818012210",
+    quantity: "50 MT",
+    expectedDate: "90 Days",
+    requestDay: "23/08/2025",
     thumb: "wheat",
   },
 ];
@@ -173,8 +183,23 @@ export const newIntakeItems: IntakeRecord[] = [
   {
     commodity: "Coffee (Robusta)",
     party: "Farmer : Sachin Rana",
-    quantity: "150 MT",
-    requestedOn: "23/08/2026",
+    village: "Chikmagalur, KA",
+    mobile: "9818012210",
+    quantity: "50 MT",
+    expectedDate: "90 Days",
+    requestDay: "23/08/2025",
     thumb: "coffee",
+    action: "invoice",
+  },
+  {
+    commodity: "Wheat (Hybrid)",
+    party: "Farmer : Sachin Rana",
+    village: "Chikmagalur, KA",
+    mobile: "9818012210",
+    quantity: "50 MT",
+    expectedDate: "90 Days",
+    requestDay: "23/08/2025",
+    thumb: "wheat",
+    action: "approve",
   },
 ];
