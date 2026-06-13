@@ -23,7 +23,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="w-full max-w-md rounded-xl bg-white/95 p-8 shadow-2xl backdrop-blur-sm">
+    <div className="w-full max-w-md rounded-xl border border-gray-100 bg-white p-8 shadow-lg">
       <h1 className="text-3xl font-bold text-gray-900">Welcome</h1>
       <p className="mt-1 text-sm text-gray-500">
         Sign in to continue to your account
@@ -119,7 +119,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
       </div>
 
       <p className="text-center text-sm text-gray-500">
-        Sign Up to access WDRA portal and manage your account securely.
+        Sign Up to access WDRA account.
       </p>
 
       <Link

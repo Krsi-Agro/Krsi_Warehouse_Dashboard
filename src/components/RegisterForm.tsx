@@ -119,45 +119,17 @@ export default function RegisterForm() {
     register,
     {},
   );
-  const [kind, setKind] = useState<EntityKind>("individual");
-  const entityOptions = ENTITY_TYPES.filter((t) => t.kind === kind);
   const [entityType, setEntityType] = useState(ENTITY_TYPES[0].value);
 
-  function selectKind(next: EntityKind) {
-    if (next === kind) return;
-    setKind(next);
-    setEntityType(ENTITY_TYPES.find((t) => t.kind === next)!.value);
-  }
+  const kind =
+    ENTITY_TYPES.find((t) => t.value === entityType)?.kind ?? "individual";
 
   return (
     <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h1 className="text-2xl font-bold text-gray-900">Welcome</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Sign Up</h1>
       <p className="text-xs text-gray-500">
         Create Your Warehouse Operator Account
       </p>
-
-      <div className="mt-4 inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1 text-sm font-medium">
-        {(
-          [
-            { value: "individual", label: "Individual" },
-            { value: "entity", label: "Entity / Organisation" },
-          ] as const
-        ).map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            aria-pressed={kind === opt.value}
-            onClick={() => selectKind(opt.value)}
-            className={`rounded-md px-4 py-1.5 transition-colors ${
-              kind === opt.value
-                ? "bg-brand text-white shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
 
       <form action={formAction} className="flex flex-col">
         <SectionHeading>
@@ -173,7 +145,7 @@ export default function RegisterForm() {
             onChange={(e) => setEntityType(e.target.value)}
             className="mt-1 h-10 w-full rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-900 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           >
-            {entityOptions.map((t) => (
+            {ENTITY_TYPES.map((t) => (
               <option key={t.value} value={t.value}>
                 {t.label}
               </option>
