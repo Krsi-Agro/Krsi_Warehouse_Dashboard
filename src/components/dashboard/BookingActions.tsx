@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { decideBooking } from "@/lib/actions";
 import type { BookingStatus } from "@/lib/api";
 
@@ -34,14 +35,13 @@ export function BookingActions({
   }
 
   if (canGenerateInvoice) {
-    // No invoice-generation endpoint provided yet — wire it up when available.
     return (
-      <button
-        type="button"
-        className="rounded-md bg-green-600 px-5 py-2 text-xs font-medium text-white transition-colors hover:bg-green-700"
+      <Link
+        href={`/dashboard/inward/new-intake/${id}`}
+        className="inline-block rounded-md bg-green-600 px-5 py-2 text-xs font-medium text-white transition-colors hover:bg-green-700"
       >
         Generate Invoice
-      </button>
+      </Link>
     );
   }
 

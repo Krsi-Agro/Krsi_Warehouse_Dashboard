@@ -9,8 +9,10 @@ import { sidebarNav } from "@/lib/dashboard-data";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const childActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
   const [open, setOpen] = useState<string | null>(
-    sidebarNav.find((i) => i.children?.some((c) => c.href === pathname))
+    sidebarNav.find((i) => i.children?.some((c) => childActive(c.href)))
       ?.label ?? null,
   );
 
@@ -48,7 +50,7 @@ export function Sidebar() {
                 {isOpen ? (
                   <div className="ml-9 mt-0.5 space-y-0.5">
                     {item.children.map((c) => {
-                      const active = pathname === c.href;
+                      const active = childActive(c.href);
                       return (
                         <Link
                           key={c.href}
