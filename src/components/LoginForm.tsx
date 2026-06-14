@@ -1,26 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
-import { signIn, type SignInState } from "@/lib/actions";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="h-11 w-full rounded-md bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-70"
-    >
-      {pending ? "Signing in…" : "Sign In"}
-    </button>
-  );
-}
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { login } from "@/store/authSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 export default function LoginForm({ notice }: { notice?: string }) {
-  const [state, formAction] = useActionState<SignInState, FormData>(signIn, {});
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { status, error } = useAppSelector((s) => s.auth);
   const [showPassword, setShowPassword] = useState(false);
+
+  const pending = status === "loading";
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const result = await dispatch(
+      login({
+        userId: String(form.get("userId") ?? ""),
+        password: String(form.get("password") ?? ""),
+        remember: form.get("remember") === "on",
+      }),
+    );
+    if (login.fulfilled.match(result)) {
+      router.push("/dashboard");
+      router.refresh();
+    }
+  }
 
   return (
     <div className="w-full max-w-md rounded-xl border border-gray-100 bg-white p-8 shadow-lg">
@@ -37,7 +45,7 @@ export default function LoginForm({ notice }: { notice?: string }) {
 
       <h2 className="mt-6 text-base font-semibold text-gray-900">Sign In</h2>
 
-      <form action={formAction} className="mt-3 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-3 space-y-4">
         <div>
           <label
             htmlFor="userId"
@@ -100,16 +108,22 @@ export default function LoginForm({ notice }: { notice?: string }) {
           </div>
         </div>
 
-        {state.error ? (
+        {error ? (
           <p
             role="alert"
             className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700"
           >
-            {state.error}
+            {error}
           </p>
         ) : null}
 
-        <SubmitButton />
+        <button
+          type="submit"
+          disabled={pending}
+          className="h-11 w-full rounded-md bg-brand text-sm font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {pending ? "Signing in…" : "Sign In"}
+        </button>
       </form>
 
       <div className="my-4 flex items-center gap-3 text-xs text-gray-400">

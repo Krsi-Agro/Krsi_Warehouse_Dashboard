@@ -1,42 +1,77 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession } from "./session";
+import { apiLogin, postBookingDecision } from "./api";
+import { createSession, deleteSession, getSession } from "./session";
 
-export type SignInState = {
-  error?: string;
-};
+export type LoginResult =
+  | { ok: true; userId: string; name: string; role: string }
+  | { ok: false; error: string };
 
 /**
- * Sign-in Server Action wired to the login <form>.
+ * Login Server Action invoked from the Redux `login` thunk.
  *
- * This is a placeholder credential check — swap the validation block for a
- * real call to the WDRA auth backend and keep the session/redirect handling.
+ * Authenticates against the WDRA backend, stores the access token + user in the
+ * HTTP-only session cookie (so the proxy guard and server-side API calls work),
+ * and returns a serializable result. The client handles navigation by role.
  */
-export async function signIn(
-  _prevState: SignInState,
-  formData: FormData,
-): Promise<SignInState> {
-  const userId = String(formData.get("userId") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
+export async function loginRequest(credentials: {
+  userId: string;
+  password: string;
+}): Promise<LoginResult> {
+  const phoneNumber = credentials.userId.trim();
+  const password = credentials.password;
 
-  if (!userId || !password) {
-    return { error: "Please enter both your User ID and password." };
+  if (!phoneNumber || !password) {
+    return { ok: false, error: "Please enter both your User ID and password." };
   }
 
-  // TODO: replace with a real authentication request.
-  const isValid = password.length >= 4;
-  if (!isValid) {
-    return { error: "Invalid User ID or password." };
+  try {
+    const data = await apiLogin(phoneNumber, password);
+    await createSession({
+      token: data.session.access_token,
+      user: {
+        id: data.user.id,
+        name: data.user.full_name,
+        phone: data.user.phone,
+        role: data.user.role,
+      },
+    });
+    return {
+      ok: true,
+      userId: data.user.id,
+      name: data.user.full_name,
+      role: data.user.role,
+    };
+  } catch (err) {
+    const error =
+      err instanceof Error
+        ? err.message
+        : "Login failed. Please try again.";
+    return { ok: false, error };
   }
-
-  await createSession(userId);
-  redirect("/dashboard");
 }
 
 export async function signOut(): Promise<void> {
   await deleteSession();
   redirect("/login");
+}
+
+/**
+ * Accept or reject a booking request, then refresh the booking list.
+ * Used as a bound form action: `decideBooking.bind(null, id, "accepted")`.
+ */
+export async function decideBooking(
+  bookingId: string,
+  decision: "accepted" | "rejected",
+): Promise<void> {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+  await postBookingDecision(session.token, bookingId, decision);
+  revalidatePath("/dashboard/inward/booking");
 }
 
 export type RegisterState = {

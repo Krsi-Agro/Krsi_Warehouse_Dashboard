@@ -1,10 +1,21 @@
-import { Coffee, Wheat } from "lucide-react";
-import type { IntakeRecord } from "@/lib/dashboard-data";
+import { Coffee, Sprout, Wheat, type LucideIcon } from "lucide-react";
 
-const THUMB = {
+export type IntakeCardData = {
+  commodity: string;
+  party: string;
+  village: string;
+  mobile: string;
+  quantity: string;
+  expectedDate: string;
+  requestDay: string;
+  thumb: string;
+};
+
+const THUMB: Record<string, { from: string; to: string; Icon: LucideIcon }> = {
   coffee: { from: "#5b3a29", to: "#a06a43", Icon: Coffee },
   wheat: { from: "#b8860b", to: "#e6c200", Icon: Wheat },
-} as const;
+};
+const DEFAULT_THUMB = { from: "#3f7d4e", to: "#1b5e3f", Icon: Sprout };
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
@@ -17,12 +28,12 @@ function Info({ label, value }: { label: string; value: string }) {
 
 export function IntakeCard({
   record,
-  actions = "none",
+  actions,
 }: {
-  record: IntakeRecord;
-  actions?: "none" | "approve" | "invoice";
+  record: IntakeCardData;
+  actions?: React.ReactNode;
 }) {
-  const thumb = THUMB[record.thumb];
+  const thumb = THUMB[record.thumb] ?? DEFAULT_THUMB;
   const ThumbIcon = thumb.Icon;
 
   return (
@@ -49,31 +60,7 @@ export function IntakeCard({
         <Info label="Request Day" value={record.requestDay} />
       </div>
 
-      {actions === "approve" ? (
-        <div className="flex shrink-0 flex-col gap-2">
-          <button
-            type="button"
-            className="rounded-md bg-green-600 px-6 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
-          >
-            Approved
-          </button>
-          <button
-            type="button"
-            className="rounded-md bg-red-500 px-6 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-600"
-          >
-            Rejected
-          </button>
-        </div>
-      ) : null}
-
-      {actions === "invoice" ? (
-        <button
-          type="button"
-          className="shrink-0 rounded-md bg-green-600 px-5 py-2 text-xs font-medium text-white transition-colors hover:bg-green-700"
-        >
-          Generate Invoice
-        </button>
-      ) : null}
+      {actions ? <div className="shrink-0">{actions}</div> : null}
     </div>
   );
 }

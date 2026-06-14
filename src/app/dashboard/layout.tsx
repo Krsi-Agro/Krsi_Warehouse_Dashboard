@@ -17,7 +17,7 @@ export default async function DashboardLayout({
         <Sidebar />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar userName={session.userId || "Suraj Singh"} />
+          <Topbar userName={session.user.name || "Suraj Singh"} />
 
           <div className="flex-1 space-y-5 bg-gray-50/60 p-6">{children}</div>
         </div>
