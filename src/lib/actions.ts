@@ -71,7 +71,9 @@ export async function decideBooking(
     redirect("/login");
   }
   await postBookingDecision(session.token, bookingId, decision);
+  // Approving moves a request from Booking into New Intake — refresh both.
   revalidatePath("/dashboard/inward/booking");
+  revalidatePath("/dashboard/inward/new-intake");
 }
 
 export type RegisterState = {
